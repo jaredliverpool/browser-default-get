@@ -1,6 +1,6 @@
 # HTB - Basic Auth: Finding the Flag via GET / search.php
 
-**Tagline:** Demonstration of using Basic HTTP auth and `curl`/DevTools/Fetch to retrieve a JSON-backed search endpoint (screenshots included — placeholders below).
+**Tagline:** Demonstration of using Basic HTTP auth and `curl`/DevTools/Fetch to retrieve a JSON-backed search endpoint.
 
 ---
 
@@ -44,7 +44,7 @@ username: admin
 password: admin
 ```
 
-**Placeholder for target:** `http://<SERVER_IP>:<PORT>/`
+**Placeholder for target:** `94.237.123.119:59527`
 
 ---
 
@@ -60,6 +60,9 @@ password: admin
 WWW-Authenticate: Basic realm="Access denied"
 ```
 
+<img width="817" height="404" alt="Screenshot 2025-10-06 at 2 30 22 AM" src="https://github.com/user-attachments/assets/f3e80765-51f2-4d2d-ac54-b05dfa1ac3bb" />
+
+
 That confirmed Basic auth was in use.
 
 ---
@@ -72,11 +75,17 @@ That confirmed Basic auth was in use.
 curl -u admin:admin http://<SERVER_IP>:<PORT>/
 ```
 
+<img width="965" height="503" alt="Screenshot 2025-10-06 at 2 32 00 AM" src="https://github.com/user-attachments/assets/a7883ce8-cede-4c93-af4d-417dba70e287" />
+
+
 3. I also tried embedding credentials in the URL (alternate form):
 
 ```bash
 curl http://admin:admin@<SERVER_IP>:<PORT>/
 ```
+
+<img width="811" height="571" alt="Screenshot 2025-10-06 at 2 35 36 AM" src="https://github.com/user-attachments/assets/d4244e59-da59-4fc7-85d2-0230c777b2ba" />
+
 
 Both gave me the page content.
 
@@ -89,6 +98,9 @@ Both gave me the page content.
 ```bash
 curl -v http://admin:admin@<SERVER_IP>:<PORT>/
 ```
+
+<img width="804" height="481" alt="Screenshot 2025-10-06 at 2 38 25 AM" src="https://github.com/user-attachments/assets/23877050-94a9-4148-bcaf-1d7a20595d9f" />
+
 
 That showed the `Authorization` header being sent:
 
@@ -104,6 +116,9 @@ Authorization: Basic YWRtaW46YWRtaW4=
 curl -H 'Authorization: Basic YWRtaW46YWRtaW4=' http://<SERVER_IP>:<PORT>/
 ```
 
+<img width="805" height="550" alt="Screenshot 2025-10-06 at 2 41 37 AM" src="https://github.com/user-attachments/assets/8557e23c-743e-4358-831b-0dc8f60918dd" />
+
+
 This returned the same page content as supplying credentials.
 
 ---
@@ -112,7 +127,13 @@ This returned the same page content as supplying credentials.
 
 6. After authenticating in the browser, I navigated to the page with the search bar. To watch the network requests I opened **Developer Tools → Network** and cleared previous entries (trash icon) so I would only see new requests.
 
+<img width="1181" height="246" alt="Screenshot 2025-10-06 at 2 43 39 AM" src="https://github.com/user-attachments/assets/56e29fb7-c56b-4f3c-971e-d2d79a14a890" />
+
+
 7. I typed `ne` into the search box and pressed Enter. A new request appeared called `search.php` with the query parameter `search=ne` — indicating the search widget performs a GET to `search.php`.
+
+<img width="1180" height="251" alt="Screenshot 2025-10-06 at 2 45 02 AM" src="https://github.com/user-attachments/assets/3abcbd64-c7b6-4c5b-8435-1469e0e551fc" />
+
 
 8. I right-clicked that network row and selected **Copy → Copy as URL**. That gave me a full URL I could paste into the terminal.
 
@@ -125,6 +146,8 @@ This returned the same page content as supplying credentials.
 ```bash
 curl 'http://<SERVER_IP>:<PORT>/search.php?search=ne' -H 'Authorization: Basic YWRtaW46YWRtaW4='
 ```
+<img width="814" height="126" alt="Screenshot 2025-10-06 at 2 48 07 AM" src="https://github.com/user-attachments/assets/ba2abec8-29f4-4ff9-81a4-689a4d1860c2" />
+
 
 The response I received matched what the browser showed. It looked like the search endpoint returned JSON results (not just HTML), which made it easier to parse programmatically.
 
@@ -134,13 +157,16 @@ The response I received matched what the browser showed. It looked like the sear
 
 10. From DevTools I also used **Copy → Copy as Fetch** and pasted the snippet into the Console. I executed it there to reproduce the same request from within the browser environment.
 
-*(Keep screenshots here showing: Network entry for `search.php`, the Copy as URL action, the copied Fetch snippet in the console, and the JSON response.)*
+<img width="1224" height="248" alt="Screenshot 2025-10-06 at 2 57 35 AM" src="https://github.com/user-attachments/assets/a6e80fb1-f9fe-413b-a645-fce0cd352e94" />
+
 
 ---
 
 ## 5) Results
 
-* Using the above steps I was able to access the search endpoint and retrieve the JSON results. The flag appeared in the returned data (redacted here for the repo — include a screenshot of the flag in the `screenshots/` folder when you commit).
+* Using the above steps I was able to access the search endpoint and retrieve the JSON results. The flag appeared in the returned data.
+* <img width="816" height="100" alt="Screenshot 2025-10-06 at 3 00 21 AM" src="https://github.com/user-attachments/assets/24be1cfa-4ec8-4fdc-877a-51f97c7c1319" />
+
 
 ---
 
@@ -152,29 +178,3 @@ The response I received matched what the browser showed. It looked like the sear
 
 ---
 
-## 7) Screenshots (placeholders)
-
-* `screenshots/01-login.png` — login prompt and `WWW-Authenticate` header visible in devtools
-* `screenshots/02-curl-v.png` — `curl -v` output showing `Authorization` header
-* `screenshots/03-network-search.png` — Network tab showing `search.php?search=ne`
-* `screenshots/04-copy-fetch-console.png` — pasted Fetch snippet in Console and response
-* `screenshots/05-flag.png` — redacted/uncropped screenshot showing the flag (or blurred if you prefer)
-
----
-
-## Suggested repo name and README tagline
-
-* **Repo name (kebab-case):** `htb-basic-auth-search`
-* **Short README line:** "Documenting how I used Basic HTTP auth, `curl`, and browser DevTools to reproduce a JSON search endpoint and recover the flag on an HTB machine."
-
----
-
-If you want, I can also:
-
-* Create a ready-to-go `README.md` file (this is already in the canvas).
-* Add example screenshots to the repo structure and a `.gitignore` for any sensitive images.
-* Generate a short `report.md` version suitable for sharing with teammates.
-
----
-
-*End of document.*
