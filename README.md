@@ -11,8 +11,7 @@
 3. Quick prerequisites (platforms, tools, creds)
 4. Step-by-step walkthrough (what I did, commands I ran, what I observed)
 5. Results (where the flag was found)
-6. Notes, lessons learned, and next steps
-7. Screenshots & attachments (placeholders)
+6. Notes and lessons learned
 
 ---
 
